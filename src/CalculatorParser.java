@@ -16,18 +16,19 @@ public class CalculatorParser {
     }
 
     private int expr2(int cond) throws IOException, ParseError{
-        if(lookaheadToken == '*' || lookaheadToken == '/' ||lookaheadToken == '\n' || lookaheadToken == -1){
+        if(lookaheadToken == '*' || lookaheadToken == '/' || lookaheadToken == '(' || lookaheadToken == ')' || lookaheadToken == '\n' || lookaheadToken == -1){
             return cond;            /*no other lookahead tokens, reached EOF*/
         }
         int returnValue;
         if(lookaheadToken == '+'){
             consume('+');
             returnValue = cond + term();
-            expr2(returnValue);
+            returnValue = expr2(returnValue);
         }else if (lookaheadToken == '-'){
             consume('-');
-            returnValue = cond - term();
-            expr2(returnValue);
+            //returnValue = cond - term();
+            returnValue = term();
+            returnValue = expr2(returnValue);
         }else{
             throw new ParseError();
         }
@@ -40,18 +41,18 @@ public class CalculatorParser {
     }
 
     private int term2(int cond) throws IOException, ParseError {
-        if(lookaheadToken == '+' || lookaheadToken == '-' || lookaheadToken == '\n' || lookaheadToken == -1){
+        if(lookaheadToken == '+' || lookaheadToken == '-' || lookaheadToken == '(' || lookaheadToken == ')' || lookaheadToken == '\n' || lookaheadToken == -1){
             return cond;            /*no other lookahead tokens, reached EOF*/
         }
         int returnValue;
         if(lookaheadToken == '*'){
             consume('*');
             returnValue = cond * factor();
-            term2(returnValue);
+            returnValue = term2(returnValue);
         }else if (lookaheadToken == '/'){
             consume('/');
             returnValue = cond / factor();
-            term2(returnValue);
+            returnValue = term2(returnValue);
         }else{
             throw new ParseError();
         }
@@ -59,11 +60,13 @@ public class CalculatorParser {
     }
 
     private int factor() throws IOException, ParseError{
-        if(lookaheadToken < 0 || lookaheadToken > 9){
+        if(lookaheadToken == '('){
+            consume('(');
+            int returnValue = expr();
+            consume(')');
+            return returnValue;
+        }else if(lookaheadToken < 0 || lookaheadToken > 9){
             return num();
-        }else if(lookaheadToken == '('){
-            consume(lookaheadToken);
-            return expr();
         }else {
             throw new ParseError();
         }
