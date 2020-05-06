@@ -16,7 +16,8 @@ public class CalculatorParser {
     }
 
     private int expr2(int cond) throws IOException, ParseError{
-        if(lookaheadToken == '*' || lookaheadToken == '/' || lookaheadToken == '(' || lookaheadToken == ')' || lookaheadToken == '\n' || lookaheadToken == -1){
+        if(lookaheadToken == '*' || lookaheadToken == '/' || lookaheadToken == '('
+                || lookaheadToken == ')' || lookaheadToken == '\n' || lookaheadToken == -1){
             return cond;            /*no other lookahead tokens, reached EOF*/
         }
         int returnValue;
@@ -26,8 +27,7 @@ public class CalculatorParser {
             returnValue = expr2(returnValue);
         }else if (lookaheadToken == '-'){
             consume('-');
-            //returnValue = cond - term();
-            returnValue = term();
+            returnValue = cond - term();
             returnValue = expr2(returnValue);
         }else{
             throw new ParseError();
@@ -41,7 +41,8 @@ public class CalculatorParser {
     }
 
     private int term2(int cond) throws IOException, ParseError {
-        if(lookaheadToken == '+' || lookaheadToken == '-' || lookaheadToken == '(' || lookaheadToken == ')' || lookaheadToken == '\n' || lookaheadToken == -1){
+        if(lookaheadToken == '+' || lookaheadToken == '-' || lookaheadToken == '('
+                || lookaheadToken == ')' || lookaheadToken == '\n' || lookaheadToken == -1){
             return cond;            /*no other lookahead tokens, reached EOF*/
         }
         int returnValue;
@@ -96,15 +97,6 @@ public class CalculatorParser {
         return digit - '0';
     }
 
-    /*        int fisrtNum = digit;
-        consume(digit);
-        int nextToken = lookaheadToken;
-        if((lookaheadToken >= '0' && lookaheadToken <= '9')){
-            String strDigit = String.valueOf(fisrtNum-'0') + String.valueOf(nextToken-'0');
-            digit = Integer.parseInt(strDigit + (evalDigit(nextToken)-'0'));
-            return digit;
-        }*/
-
     private void consume(int symbol) throws IOException, ParseError{
         if (lookaheadToken != symbol){
             throw new ParseError();
@@ -130,5 +122,4 @@ public class CalculatorParser {
             System.err.println(error.getMessage());
         }
     }
-
 }
